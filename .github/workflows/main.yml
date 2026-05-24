@@ -21,7 +21,7 @@ jobs:
           pwabuilder package --platform android --url https://tu-usuario.github.io/tu-repo/
           
       - name: Subir el archivo APK generado
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Tiempo-de-HD-APK
           path: output/android/
