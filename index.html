@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tiempo de HD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Manifest integrado para facilitar la compilación y el icono de la APK -->
+    <script type="application/json" id="manifest">
+    {
+      "name": "Tiempo de HD",
+      "short_name": "Tiempo de HD",
+      "start_url": "index.html",
+      "display": "standalone",
+      "background_color": "#ffffff",
+      "theme_color": "#1e40af",
+      "icons": [
+        { 
+          "src": "https://cdn-icons-png.flaticon.com/512/2933/2933611.png", 
+          "sizes": "512x512", 
+          "type": "image/png",
+          "purpose": "any maskable"
+        }
+      ]
+    }
+    </script>
+    <script>
+        const blob = new Blob([document.querySelector('#manifest').textContent], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.querySelector('head').innerHTML += `<link rel="manifest" href="${manifestURL}">`;
+    </script>
+</head>
+<body class="bg-gray-100 p-4">
+<div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-xl border border-blue-100">
+    <h1 class="text-2xl font-bold text-blue-800 mb-6 text-center">⏱️ Tiempo de HD</h1>
+    <div class="space-y-4">
+        <div>
+            <label class="block text-sm font-bold text-gray-700">Peso Seco (kg)</label>
+            <input type="number" id="peso" class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ej. 70">
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-gray-700">Género</label>
+            <select id="genero" class="w-full p-3 border rounded-xl bg-gray-50">
+                <option value="0.60">Hombre</option>
+                <option value="0.58">Mujer</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-gray-700">Dializador</label>
+            <select id="dializador" class="w-full p-3 border rounded-xl bg-gray-50 text-sm"></select>
+        </div>
+        <button onclick="calcular()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold shadow-md hover:bg-blue-700 transition">Calcular Tiempo</button>
+        <div id="resultado" class="mt-4 p-4 bg-blue-50 text-blue-900 rounded-xl text-center hidden border border-blue-200">
+            <h2 class="text-xs uppercase tracking-widest font-semibold text-blue-600">Tiempo recomendado:</h2>
+            <p id="tiempoFinal" class="text-4xl font-black mt-1"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const data = [
+        {nombre: "F5", k: 227}, {nombre: "F6", k: 243}, {nombre: "F7", k: 247}, {nombre: "F8", k: 252}, {nombre: "F10", k: 259},
+        {nombre: "FX5", k: 228}, {nombre: "FX8", k: 254}, {nombre: "FX10", k: 261}, {nombre: "FX50", k: 253}, {nombre: "FX60", k: 266},
+        {nombre: "FX80", k: 279}, {nombre: "FX100", k: 280}, {nombre: "FX CorAL 60", k: 270}, {nombre: "FX CorAL 80", k: 277},
+        {nombre: "FX CorAL 100", k: 339}, {nombre: "FX CorAL 120", k: 345}, {nombre: "SM120", k: 255}, {nombre: "SM140", k: 260},
+        {nombre: "SM160", k: 267}, {nombre: "SM180", k: 275}, {nombre: "SM200", k: 280}, {nombre: "ELISIO 09H", k: 253},
+        {nombre: "ELISIO 11H", k: 263}, {nombre: "ELISIO 13H", k: 270}, {nombre: "ELISIO 15H", k: 275}, {nombre: "ELISIO 17H", k: 280},
+        {nombre: "ELISIO 19H", k: 284}, {nombre: "ELISIO 21H", k: 293}, {nombre: "Optiflux F160NRe", k: 271}, 
+        {nombre: "Optiflux F200NRe", k: 280}, {nombre: "Revaclear 400", k: 281}, {nombre: "Theranova 500", k: 250}
+    ];
+
+    const select = document.getElementById('dializador');
+    data.sort((a,b) => a.nombre.localeCompare(b.nombre)).forEach(d => {
+        let opt = document.createElement('option');
+        opt.value = d.k;
+        opt.innerHTML = `${d.nombre} (K: ${d.k})`;
+        select.appendChild(opt);
+    });
+
+    function calcular() {
+        const peso = parseFloat(document.getElementById('peso').value);
+        const genero = parseFloat(document.getElementById('genero').value);
+        const k = parseFloat(select.value);
+        if (!peso || peso <= 0) return alert("Por favor ingresa un peso válido");
+        
+        const v = peso * genero;
+        const tiempoMinutos = (1.2 * v) / (k / 1000);
+        
+        const horas = Math.floor(tiempoMinutos / 60);
+        const minutos = Math.round(tiempoMinutos % 60);
+        
+        document.getElementById('tiempoFinal').innerText = `${horas}h ${minutos}min`;
+        document.getElementById('resultado').classList.remove('hidden');
+    }
+</script>
+</body>
+</html>
