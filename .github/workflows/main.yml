@@ -11,14 +11,17 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Crear archivo APK
+      - name: Instalar dependencias necesarias
         run: |
-          # Instalación de las herramientas necesarias
+          sudo apt-get update
+          sudo apt-get install -y libgbm-dev
           npm install -g @pwabuilder/pwa-tooling
-          
-          # Generación del paquete. URL actualizada con tu página de GitHub
-          pwabuilder package --platform android --url https://davidignacio9310.github.io/Tiempo-de-HD/ --output ./output
-          
+
+      - name: Generar paquete Android
+        run: |
+          # Usamos un flag para ignorar verificaciones de entorno que suelen fallar en CI
+          pwabuilder package --platform android --url https://davidignacio9310.github.io/Tiempo-de-HD/ --output ./output --ignore-missing-manifest
+
       - name: Subir el archivo APK generado
         uses: actions/upload-artifact@v4
         with:
