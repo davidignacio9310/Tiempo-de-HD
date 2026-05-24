@@ -1,0 +1,27 @@
+name: Generar APK de Tiempo de HD
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Crear archivo APK
+        run: |
+          # Este paso utiliza el servicio de CLI de PWA Builder 
+          # para empaquetar tu sitio en un APK de Android automáticamente.
+          echo "Compilando aplicación 'Tiempo de HD'..."
+          npm install -g @pwabuilder/pwa-tooling
+          # Genera el paquete Android basado en el manifiesto en index.html
+          pwabuilder package --platform android --url https://tu-usuario.github.io/tu-repo/
+          
+      - name: Subir el archivo APK generado
+        uses: actions/upload-artifact@v3
+        with:
+          name: Tiempo-de-HD-APK
+          path: output/android/
